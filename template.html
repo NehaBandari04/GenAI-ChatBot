@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google GEN-AI ChatBot</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            width: 60%;
+            max-width: 600px;
+            height: 80%;
+            max-height: 700px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background-color: #fff;
+        }
+        #chat-header {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        #chatbox {
+            flex: 1;
+            padding: 20px;
+            overflow-y: scroll;
+            border-bottom: 1px solid #eee;
+        }
+        #chatbox p {
+            margin: 0 0 10px;
+        }
+        #userInput {
+            width: calc(100% - 110px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #sendButton {
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #sendButton:hover {
+            background-color: #0056b3;
+        }
+        form {
+            display: flex;
+            padding: 20px;
+            background-color: #fafafa;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-header">Google GEN-AI ChatBot</div>
+        <div id="chatbox"></div>
+        <form id="chatForm" method="post">
+            <input type="text" id="userInput" name="msg" autocomplete="off" placeholder="Type a message">
+            <button type="submit" id="sendButton">Send</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('chatForm');
+        const input = document.getElementById('userInput');
+        const chatbox = document.getElementById('chatbox');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userMessage = input.value;
+            appendMessage('You: ' + userMessage);
+
+            const response = await fetch('/get', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    msg: userMessage,
+                }),
+            });
+            const botMessage = await response.text();
+            appendMessage('AI: ' + botMessage);
+            input.value = '';
+        });
+
+        function appendMessage(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            chatbox.appendChild(p);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
